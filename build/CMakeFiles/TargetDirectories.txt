@@ -1,4 +1,0 @@
-/home/marcus/Workspace/Coding/C++/Cpp-OpenCV/build/CMakeFiles/rebuild_cache.dir
-/home/marcus/Workspace/Coding/C++/Cpp-OpenCV/build/CMakeFiles/edit_cache.dir
-/home/marcus/Workspace/Coding/C++/Cpp-OpenCV/build/CMakeFiles/vo_test.dir
-/home/marcus/Workspace/Coding/C++/Cpp-OpenCV/build/CMakeFiles/opencv_test.dir
