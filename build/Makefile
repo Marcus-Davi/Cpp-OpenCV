@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/marcus/Workspace/Coding/C++/Cpp-Opencv
+CMAKE_SOURCE_DIR = /home/marcus/Workspace/Coding/C++/Cpp-OpenCV
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/marcus/Workspace/Coding/C++/Cpp-Opencv/build
+CMAKE_BINARY_DIR = /home/marcus/Workspace/Coding/C++/Cpp-OpenCV/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/marcus/Workspace/Coding/C++/Cpp-Opencv/build/CMakeFiles /home/marcus/Workspace/Coding/C++/Cpp-Opencv/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/marcus/Workspace/Coding/C++/Cpp-OpenCV/build/CMakeFiles /home/marcus/Workspace/Coding/C++/Cpp-OpenCV/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/marcus/Workspace/Coding/C++/Cpp-Opencv/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/marcus/Workspace/Coding/C++/Cpp-OpenCV/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -109,6 +109,19 @@ preinstall/fast:
 depend:
 	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
+
+#=============================================================================
+# Target rules for targets named vo_test
+
+# Build rule for target.
+vo_test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 vo_test
+.PHONY : vo_test
+
+# fast build rule for target.
+vo_test/fast:
+	$(MAKE) -f CMakeFiles/vo_test.dir/build.make CMakeFiles/vo_test.dir/build
+.PHONY : vo_test/fast
 
 #=============================================================================
 # Target rules for targets named opencv_test
@@ -150,6 +163,33 @@ src/test.cpp.s:
 	$(MAKE) -f CMakeFiles/opencv_test.dir/build.make CMakeFiles/opencv_test.dir/src/test.cpp.s
 .PHONY : src/test.cpp.s
 
+src/vo.o: src/vo.cpp.o
+
+.PHONY : src/vo.o
+
+# target to build an object file
+src/vo.cpp.o:
+	$(MAKE) -f CMakeFiles/vo_test.dir/build.make CMakeFiles/vo_test.dir/src/vo.cpp.o
+.PHONY : src/vo.cpp.o
+
+src/vo.i: src/vo.cpp.i
+
+.PHONY : src/vo.i
+
+# target to preprocess a source file
+src/vo.cpp.i:
+	$(MAKE) -f CMakeFiles/vo_test.dir/build.make CMakeFiles/vo_test.dir/src/vo.cpp.i
+.PHONY : src/vo.cpp.i
+
+src/vo.s: src/vo.cpp.s
+
+.PHONY : src/vo.s
+
+# target to generate assembly for a file
+src/vo.cpp.s:
+	$(MAKE) -f CMakeFiles/vo_test.dir/build.make CMakeFiles/vo_test.dir/src/vo.cpp.s
+.PHONY : src/vo.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -158,10 +198,14 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
+	@echo "... vo_test"
 	@echo "... opencv_test"
 	@echo "... src/test.o"
 	@echo "... src/test.i"
 	@echo "... src/test.s"
+	@echo "... src/vo.o"
+	@echo "... src/vo.i"
+	@echo "... src/vo.s"
 .PHONY : help
 
 

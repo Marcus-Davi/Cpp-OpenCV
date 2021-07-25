@@ -44,15 +44,16 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/marcus/Workspace/Coding/C++/Cpp-Opencv
+CMAKE_SOURCE_DIR = /home/marcus/Workspace/Coding/C++/Cpp-OpenCV
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/marcus/Workspace/Coding/C++/Cpp-Opencv/build
+CMAKE_BINARY_DIR = /home/marcus/Workspace/Coding/C++/Cpp-OpenCV/build
 
 #=============================================================================
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
+all: CMakeFiles/vo_test.dir/all
 all: CMakeFiles/opencv_test.dir/all
 
 .PHONY : all
@@ -63,9 +64,37 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
+clean: CMakeFiles/vo_test.dir/clean
 clean: CMakeFiles/opencv_test.dir/clean
 
 .PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/vo_test.dir
+
+# All Build rule for target.
+CMakeFiles/vo_test.dir/all:
+	$(MAKE) -f CMakeFiles/vo_test.dir/build.make CMakeFiles/vo_test.dir/depend
+	$(MAKE) -f CMakeFiles/vo_test.dir/build.make CMakeFiles/vo_test.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/marcus/Workspace/Coding/C++/Cpp-OpenCV/build/CMakeFiles --progress-num=3,4 "Built target vo_test"
+.PHONY : CMakeFiles/vo_test.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/vo_test.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/marcus/Workspace/Coding/C++/Cpp-OpenCV/build/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/vo_test.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/marcus/Workspace/Coding/C++/Cpp-OpenCV/build/CMakeFiles 0
+.PHONY : CMakeFiles/vo_test.dir/rule
+
+# Convenience name for target.
+vo_test: CMakeFiles/vo_test.dir/rule
+
+.PHONY : vo_test
+
+# clean rule for target.
+CMakeFiles/vo_test.dir/clean:
+	$(MAKE) -f CMakeFiles/vo_test.dir/build.make CMakeFiles/vo_test.dir/clean
+.PHONY : CMakeFiles/vo_test.dir/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/opencv_test.dir
@@ -74,14 +103,14 @@ clean: CMakeFiles/opencv_test.dir/clean
 CMakeFiles/opencv_test.dir/all:
 	$(MAKE) -f CMakeFiles/opencv_test.dir/build.make CMakeFiles/opencv_test.dir/depend
 	$(MAKE) -f CMakeFiles/opencv_test.dir/build.make CMakeFiles/opencv_test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/marcus/Workspace/Coding/C++/Cpp-Opencv/build/CMakeFiles --progress-num=1,2 "Built target opencv_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/marcus/Workspace/Coding/C++/Cpp-OpenCV/build/CMakeFiles --progress-num=1,2 "Built target opencv_test"
 .PHONY : CMakeFiles/opencv_test.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/opencv_test.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/marcus/Workspace/Coding/C++/Cpp-Opencv/build/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/marcus/Workspace/Coding/C++/Cpp-OpenCV/build/CMakeFiles 2
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/opencv_test.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/marcus/Workspace/Coding/C++/Cpp-Opencv/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/marcus/Workspace/Coding/C++/Cpp-OpenCV/build/CMakeFiles 0
 .PHONY : CMakeFiles/opencv_test.dir/rule
 
 # Convenience name for target.
