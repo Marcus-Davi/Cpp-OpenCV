@@ -4,8 +4,8 @@
 #include <unistd.h>
 #include <Eigen/Dense>
 
-#define FRAMES_PATH "/home/marcus/Workspace/Coding/Python/bm_frames/"
-// #define FRAMES_PATH "/home/marcus/Workspace/Coding/Python/data_odometry_gray/dataset/sequences/00/image_0/"
+// #define FRAMES_PATH "/home/marcus/Workspace/Coding/Python/bm_frames/"
+#define FRAMES_PATH "/home/marcus/Workspace/Coding/Python/data_odometry_gray/dataset/sequences/00/image_0/"
 
 using namespace cv;
 using namespace std;
@@ -14,7 +14,7 @@ using namespace std;
 // int FOCAL_LENGTH = 460;
 const int ROW = 720;
 const int COL = 1280;
-int MAX_FEATURES = 2000;
+int MIN_FEATURES = 2000;
 // default cam info from 17/07/21
 const double fx = 616.8896484375;
 const double fy = 751.7689208984375;
@@ -77,7 +77,7 @@ int main()
     sprintf(img_id, "%06d", count);
     cout << img_id << endl;
 
-    cv::Mat cur_img, prev_img;
+    cv::Mat cur_img, prev_img,color_img;
     vector<Point2f> cur_pts, prev_pts, new_pts;
     vector<KeyPoint> keypts;
 
@@ -91,7 +91,7 @@ int main()
         int r = rng.uniform(0, 256);
         int g = rng.uniform(0, 256);
         int b = rng.uniform(0, 256);
-        colors.push_back(Scalar(r, g, b));
+        colors.push_back(Scalar(0, 250, 0));
     }
 
     Mat finalR, finalT;
@@ -101,7 +101,7 @@ int main()
     Eigen::Vector3d prevT(0, 0, 0);
     Eigen::Vector3d currT(0, 0, 0);
 
-    Ptr<FastFeatureDetector> fast = FastFeatureDetector::create(25, true);
+    Ptr<FastFeatureDetector> fast = FastFeatureDetector::create(30, true);
 
     while (1)
     {
@@ -113,27 +113,22 @@ int main()
         {
             prev_img = imread(img_path, IMREAD_GRAYSCALE);
             fast->detect(prev_img, keypts);
-            prev_pts.resize(keypts.size());
-            int i = 0;
-            for (const auto &pt : keypts)
-            {
-                prev_pts[i] = pt.pt;
-                i++;
-            }
+            KeyPoint::convert(keypts, prev_pts);
 
             // goodFeaturesToTrack(prev_img, prev_pts, MAX_FEATURES, 0.05, 40, Mat());
-            mask = Mat::zeros(prev_img.size(), prev_img.type());
+            mask = Mat::zeros(prev_img.size(), CV_8UC3);
             count++;
             continue;
         }
 
         cur_img = imread(img_path, IMREAD_GRAYSCALE);
+        color_img = imread(img_path,IMREAD_COLOR);
 
         // Process here
         vector<uchar> status;
         vector<float> err;
         TermCriteria criteria = TermCriteria((TermCriteria::COUNT) + (TermCriteria::EPS), 30, 0.01);
-        calcOpticalFlowPyrLK(prev_img, cur_img, prev_pts, cur_pts, status, err, Size(21, 21), 3, criteria);
+        calcOpticalFlowPyrLK(prev_img, cur_img, prev_pts, cur_pts, status, err, Size(21, 21), 3, criteria,0,0.001);
 
         for (int i = 0; i < int(cur_pts.size()); i++)
             if (status[i] && !inBorder(cur_pts[i]))
@@ -141,22 +136,21 @@ int main()
 
         reduceVector(prev_pts, status);
         reduceVector(cur_pts, status);
-        // reduceVector(ids, status);
-        // reduceVector(cur_un_pts, status);
-        // reduceVector(track_cnt, status);
 
-        // for (uint i = 0; i < cur_pts.size(); i++)
-        // {
-        //     line(mask, prev_pts[i], cur_pts[i], colors[i], 2);
-        //     circle(cur_img, cur_pts[i], 5, colors[i], -1);
-        // }
+
+        for (uint i = 0; i < cur_pts.size(); i++)
+        {
+            // line(mask, prev_pts[i], cur_pts[i], colors[i], 2);
+            circle(color_img, cur_pts[i], 2, Scalar(0,250,0), -1);
+            // circle(cur_img, prev_pts[i], 5, colors[i], -1);
+        }
 
         // KITTI CAMERA
-        // double FOCAL_LENGTH = 718.8560;
-        // const Point2d pp(607.1928, 185.2157);
-        // NOMAD CAMERA
         double FOCAL_LENGTH = 718.8560;
-        const Point2d pp(cx, cy);
+        const Point2d pp(607.1928, 185.2157);
+        // NOMAD CAMERA
+        // double FOCAL_LENGTH = 718.8560;
+        // const Point2d pp(cx, cy);
 
         Mat Rot, Tran;
         Mat E = findEssentialMat(cur_pts, prev_pts, FOCAL_LENGTH, pp, FM_RANSAC, 0.999, 1.0);
@@ -174,11 +168,11 @@ int main()
             currT[0] = Tran.at<double>(0);
             currT[1] = Tran.at<double>(1);
             currT[2] = Tran.at<double>(2);
-            double abs_scale = 0.15; // TODO ~ distancia entre poses
+            double abs_scale = 0.7; // TODO ~ distancia entre poses
 
             // if (abs_scale > 0.1 && (fabs(currT[2] > fabs(currT[0]))) && (fabs(currT[2]) > fabs(currT[1])))
             {
-                finalT = finalT + abs_scale * finalR * Tran;
+                finalT = finalT + abs_scale * (finalR * Tran);
                 finalR = Rot * finalR;
             }
         }
@@ -188,48 +182,26 @@ int main()
         Vec3f euler = rotationMatrixToEulerAngles(finalR);
         cout << euler << endl;
 
-        // const Mat CameraMatrix = Mat(3, 3, CV_64FC1, camera_param);
-
-        // Mat EMatrix = findEssentialMat(un_prev_pts, un_cur_pts, CameraMatrix, FM_RANSAC, 0.99, 1.0);
-        // Mat R, T;
-        // recoverPose(EMatrix, un_prev_pts, un_cur_pts, CameraMatrix, R, T);
-
-        // Eigen::Vector3d currT(T.at<double>(0), T.at<double>(1), T.at<double>(2));
-        // double scale_ = (currT - prevT).norm();
-
-        // if (scale_ > 0.1 && T.at<double>(0) > T.at<double>(1) && T.at<double>(0) > T.at<double>(2))
-        // {
-        //     finalT = finalT + scale_ * R * T;
-        //     finalR = finalR * R;
-        // }
-
-        // cout << "Rot: " << finalR << "\n T:" << finalT << endl;
-        Mat img;
-        add(cur_img, mask, img);
-        imshow("Frame", img);
-        if (waitKey(1) == 27)
-            break; // stop capturing by pressing ESC
-
         // TODO heuristica para selecionar novos pontos ?
         std::cout << "total features: " << cur_pts.size();
-        if (cur_pts.size() < MAX_FEATURES)
+        if (cur_pts.size() < MIN_FEATURES)
         {
             // goodFeaturesToTrack(cur_img, new_pts, MAX_FEATURES - cur_pts.size(), 0.05, 40, Mat());
             fast->detect(cur_img, keypts);
-
-            int i = 0;
-            cur_pts.resize(keypts.size());
-            for (const auto &pt : keypts)
-            {
-                cur_pts[i] = pt.pt;
-                i++;
-            }
+            KeyPoint::convert(keypts, cur_pts);
         }
+
+        // cout << "Rot: " << finalR << "\n T:" << finalT << endl;
+        Mat img;
+        // add(color_img, mask, img);
+        imshow("Frame", color_img);
+        if (waitKey(1) == 27)
+            break; // stop capturing by pressing ESC
 
         count++;
         prev_img = cur_img;
         prev_pts = cur_pts;
-        // mask = Mat::zeros(cur_img.size(), cur_img.type());
+        mask = Mat::zeros(cur_img.size(), color_img.type());
         usleep(10000);
     }
 
@@ -241,7 +213,12 @@ int main()
 
     // drawKeypoints(img,keypoints,img2);
 
-    // imshow("window",img);
+    // imshow("window",img);   // for (uint i = 0; i < cur_pts.size(); i++)
+    // {
+    //     // line(mask, prev_pts[i], cur_pts[i], colors[i], 2);
+    //     circle(cur_img, cur_pts[i], 5, colors[i], -1);
+    //     // circle(cur_img, prev_pts[i], 5, colors[i], -1);
+    // }
     // imshow("window2",img2);
     // int k = waitKey(0);
 }
